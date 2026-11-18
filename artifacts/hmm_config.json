@@ -7,7 +7,7 @@
     "gap_break_s": 60.0
   },
   "transitions": {
-    "beta": 0.05,
+    "beta": 0.2,
     "max_speed_mps": 50.0,
     "min_cutoff_m": 200.0,
     "backtrack_tolerance_m": 15.0,
