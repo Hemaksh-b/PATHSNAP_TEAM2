@@ -10,7 +10,11 @@ import argparse
 from pathlib import Path
 from typing import Optional
 
-import folium
+try:
+    import folium
+except ImportError:  # pragma: no cover
+    folium = None  # type: ignore
+
 import numpy as np
 import pandas as pd
 
