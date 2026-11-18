@@ -1,0 +1,135 @@
+{
+  "model_key": "logistic_regression",
+  "model_name": "Logistic Regression (L2, Balanced)",
+  "algorithm_family": "Linear & Probabilistic",
+  "version": "1.0.0",
+  "exported_at_utc": "2026-11-18T06:36:27.883866+00:00",
+  "is_mock_data": true,
+  "data_source": "MOCK_SYNTHETIC_DO_NOT_REPORT",
+  "seed": 42,
+  "feature_columns": [
+    "dist_m",
+    "cand_rank",
+    "dist_gap_to_nearest_m",
+    "dist_ratio_to_nearest",
+    "frac_along",
+    "dist_to_start_m",
+    "dist_to_end_m",
+    "arc_length_m",
+    "gps_speed_mps",
+    "dt_prev_s",
+    "dt_next_s",
+    "heading_diff_deg",
+    "cos_heading_diff",
+    "sin_heading_diff",
+    "out_degree_v",
+    "in_degree_u"
+  ],
+  "n_features": 16,
+  "best_hyperparameters": {
+    "C": 27.172688373766558,
+    "class_weight": null,
+    "tol": 0.0008453402606146201
+  },
+  "tuned_vs_untuned": {
+    "untuned": {
+      "variant": "Untuned",
+      "model_key": "logistic_regression",
+      "model_name": "Logistic Regression (L2, Balanced)",
+      "algorithm_family": "Linear & Probabilistic",
+      "cv_macro_f1_mean": 0.9822,
+      "cv_macro_f1_std": 0.00216,
+      "cv_top1_accuracy_mean": 0.97594,
+      "cv_log_loss_mean": 0.03452,
+      "student_test_top1_accuracy": 0.96333,
+      "student_test_macro_f1": 0.9781,
+      "student_test_binary_f1": 0.96494,
+      "student_test_precision": 0.94137,
+      "student_test_recall": 0.98973,
+      "student_test_log_loss": 0.05559,
+      "route_continuity": 0.92759,
+      "fit_time_s": 0.02268,
+      "infer_time_s": 0.00079,
+      "infer_ms_per_trip": 0.0789,
+      "infer_us_per_obs": 2.6288,
+      "hyperparameters": "{\"C\": 1.0, \"class_weight\": \"balanced\", \"tol\": 0.0001}",
+      "data_source": "MOCK_SYNTHETIC_DO_NOT_REPORT"
+    },
+    "tuned": {
+      "variant": "Tuned (Bayesian TPE)",
+      "model_key": "logistic_regression",
+      "model_name": "Logistic Regression (L2, Balanced)",
+      "algorithm_family": "Linear & Probabilistic",
+      "cv_macro_f1_mean": 0.98513,
+      "cv_macro_f1_std": 0.00204,
+      "cv_top1_accuracy_mean": 0.97637,
+      "cv_log_loss_mean": 0.02826,
+      "student_test_top1_accuracy": 0.96333,
+      "student_test_macro_f1": 0.98515,
+      "student_test_binary_f1": 0.97611,
+      "student_test_precision": 0.97279,
+      "student_test_recall": 0.97945,
+      "student_test_log_loss": 0.02509,
+      "route_continuity": 0.92759,
+      "fit_time_s": 0.01785,
+      "infer_time_s": 0.00066,
+      "infer_ms_per_trip": 0.0664,
+      "infer_us_per_obs": 2.2133,
+      "hyperparameters": "{\"C\": 27.172688373766558, \"class_weight\": null, \"tol\": 0.0008453402606146201}",
+      "data_source": "MOCK_SYNTHETIC_DO_NOT_REPORT"
+    },
+    "delta": {
+      "cv_macro_f1": 0.00293,
+      "student_test_top1_accuracy": 0.0,
+      "student_test_macro_f1": 0.00705,
+      "student_test_log_loss": -0.0305
+    }
+  },
+  "computational_cost": {
+    "n_trials": 20,
+    "n_splits": 5,
+    "total_cv_fits": 100,
+    "total_wall_time_s": 2.1871,
+    "mean_trial_time_s": 0.1094,
+    "sampler_backend": "TPEBayesianSampler (Parzen KDE l(x)/g(x), gamma=0.25, seed=42)"
+  },
+  "environment_versions": {
+    "python": "3.13.5",
+    "scikit_learn": "1.7.2",
+    "numpy": "2.3.2",
+    "pandas": "2.3.2",
+    "joblib": "1.5.2"
+  },
+  "inference_contract": {
+    "function": "hyperparameter_optimisation.inference.predict_candidate_probs",
+    "required_id_columns": [
+      "trip_id",
+      "obs_idx",
+      "arc_id"
+    ],
+    "required_feature_columns": [
+      "dist_m",
+      "cand_rank",
+      "dist_gap_to_nearest_m",
+      "dist_ratio_to_nearest",
+      "frac_along",
+      "dist_to_start_m",
+      "dist_to_end_m",
+      "arc_length_m",
+      "gps_speed_mps",
+      "dt_prev_s",
+      "dt_next_s",
+      "heading_diff_deg",
+      "cos_heading_diff",
+      "sin_heading_diff",
+      "out_degree_v",
+      "in_degree_u"
+    ],
+    "output_columns": [
+      "trip_id",
+      "obs_idx",
+      "arc_id",
+      "prob"
+    ]
+  }
+}

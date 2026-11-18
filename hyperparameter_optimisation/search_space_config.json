@@ -1,0 +1,172 @@
+{
+  "description": "Justified Bayesian hyperparameter search spaces for PathSnap candidate-classification models (Issue #6, Report §4).",
+  "objective_metric": "5-Fold GroupKFold Composite Score: 0.50 * Top-1 Accuracy + 0.35 * Macro F1 + 0.15 / (1 + Log Loss)",
+  "objective_justification": "Optimizes pointwise route-matching accuracy (Top-1) and class-balanced discrimination (Macro F1) while penalizing poorly calibrated probabilities (Log Loss) that would distort downstream HMM emission log-probabilities.",
+  "models": {
+    "logistic_regression": {
+      "algorithm_family": "Linear & Probabilistic",
+      "parameters": {
+        "C": {
+          "type": "float",
+          "low": 0.001,
+          "high": 100.0,
+          "log": true,
+          "default": 1.0,
+          "justification": "Controls inverse L2 regularization strength across 5 orders of magnitude to balance bias on collinear distance features vs. variance across trips."
+        },
+        "class_weight": {
+          "type": "categorical",
+          "choices": ["balanced", null],
+          "default": "balanced",
+          "justification": "Tests whether inverse-frequency class weighting improves Macro F1 without hurting probability calibration (Log Loss) compared to unweighted MLE."
+        },
+        "tol": {
+          "type": "float",
+          "low": 1e-5,
+          "high": 1e-2,
+          "log": true,
+          "default": 1e-4,
+          "justification": "Controls L-BFGS convergence tolerance affecting probability precision and training speed."
+        }
+      }
+    },
+    "random_forest": {
+      "algorithm_family": "Ensemble (Bagging)",
+      "parameters": {
+        "n_estimators": {
+          "type": "int",
+          "low": 80,
+          "high": 350,
+          "step": 10,
+          "default": 200,
+          "justification": "Controls ensemble size: more trees smooth leaf probability estimates for HMM emissions at the cost of linear inference time."
+        },
+        "max_depth": {
+          "type": "int",
+          "low": 4,
+          "high": 20,
+          "step": 1,
+          "default": 12,
+          "justification": "Limits tree interaction depth to prevent memorizing trip-specific road geometries."
+        },
+        "min_samples_leaf": {
+          "type": "int",
+          "low": 2,
+          "high": 40,
+          "step": 1,
+          "default": 10,
+          "justification": "Ensures each leaf contains enough observations for smooth Laplace-like probability estimates."
+        },
+        "max_features": {
+          "type": "categorical",
+          "choices": ["sqrt", "log2", 0.5, 0.75],
+          "default": "sqrt",
+          "justification": "Controls feature subspace randomness per split to decorrelate trees."
+        },
+        "class_weight": {
+          "type": "categorical",
+          "choices": ["balanced", "balanced_subsample", null],
+          "default": "balanced_subsample",
+          "justification": "Balances 1:K candidate class skew vs. raw posterior probability calibration."
+        }
+      }
+    },
+    "mlp_neural_net": {
+      "algorithm_family": "Neural Networks",
+      "parameters": {
+        "hidden_layer_1": {
+          "type": "int",
+          "low": 32,
+          "high": 128,
+          "step": 16,
+          "default": 64,
+          "justification": "First hidden layer capacity for nonlinear spatial-angular feature representations."
+        },
+        "hidden_layer_2": {
+          "type": "int",
+          "low": 16,
+          "high": 64,
+          "step": 16,
+          "default": 32,
+          "justification": "Second hidden layer bottleneck compressing features before logistic output."
+        },
+        "alpha": {
+          "type": "float",
+          "low": 1e-5,
+          "high": 1e-1,
+          "log": true,
+          "default": 1e-3,
+          "justification": "L2 weight decay regularization preventing overconfident probability saturation."
+        },
+        "learning_rate_init": {
+          "type": "float",
+          "low": 3e-4,
+          "high": 1e-2,
+          "log": true,
+          "default": 1e-3,
+          "justification": "Initial Adam step size governing convergence speed and local minimum quality."
+        }
+      }
+    },
+    "knn_distance": {
+      "algorithm_family": "Instance-Based",
+      "parameters": {
+        "n_neighbors": {
+          "type": "int",
+          "low": 5,
+          "high": 45,
+          "step": 2,
+          "default": 15,
+          "justification": "Controls neighborhood smoothing size; larger k reduces zero-probability clipping in Log Loss."
+        },
+        "weights": {
+          "type": "categorical",
+          "choices": ["distance", "uniform"],
+          "default": "distance",
+          "justification": "Compares inverse-distance weighting against uniform neighbor voting."
+        },
+        "p": {
+          "type": "int",
+          "low": 1,
+          "high": 2,
+          "step": 1,
+          "default": 2,
+          "justification": "Compares Manhattan (L1, p=1) vs. Euclidean (L2, p=2) distance over standardized features."
+        }
+      }
+    },
+    "decision_tree": {
+      "algorithm_family": "Tree-Based",
+      "parameters": {
+        "criterion": {
+          "type": "categorical",
+          "choices": ["gini", "entropy", "log_loss"],
+          "default": "gini",
+          "justification": "Compares Gini impurity against information gain / log-loss splitting criteria."
+        },
+        "max_depth": {
+          "type": "int",
+          "low": 3,
+          "high": 16,
+          "step": 1,
+          "default": 8,
+          "justification": "Controls tree complexity to balance underfitting and trip memorization."
+        },
+        "min_samples_leaf": {
+          "type": "int",
+          "low": 5,
+          "high": 80,
+          "step": 5,
+          "default": 25,
+          "justification": "Prevents pure 0/1 small leaves that cause extreme Log Loss penalties."
+        },
+        "class_weight": {
+          "type": "categorical",
+          "choices": ["balanced", null],
+          "default": "balanced",
+          "justification": "Tests balanced vs. natural class priors in leaf probability estimation."
+        }
+      }
+    }
+  }
+}
