@@ -37,6 +37,33 @@ res.breaks     # ()
 The decoder never receives reference routes; labels are only used later, outside
 this package, to score the decoded output.
 
+## Road-graph transitions (#8)
+
+`transitions.py` builds a directed `networkx.DiGraph` from projected node
+coordinates (metres) and `.arcs`, keeping original node ids and `arc_id`s.
+
+```text
+logA(i -> j) = -beta * | d_route(p_i, p_j) - d_gps(o_t, o_t') |
+d_route      = (1 - f_i)·len(a_i) + SP(v(a_i), u(a_j)) + f_j·len(a_j)
+             = (f_j - f_i)·len(a)      if same arc and moving forward
+                                        (backward jitter <= 15 m allowed)
+```
+
+* Shortest paths: bounded Dijkstra with cutoff `max(min_cutoff_m, max_speed_mps·dt)`,
+  cached per (source node, cutoff). Unreachable within the cutoff (disconnected
+  component, one-way violation, implausible speed) → `min_logp`, which the
+  decoder turns into a segment break if no candidate pair is reachable.
+* `make_transition_fn(road, cand_arcs, cand_frac, obs_xy, timestamps, config)`
+  returns the callable `decode` expects.
+
+Measured on training trip `00000001` (largest network seen: 88 809 nodes,
+165 790 arcs, UTM EPSG:32632): graph build 0.51 s; bounded Dijkstra (200 m)
+0.040 ms per source; cache hit 0.0004 ms.
+
+Default parameters (`beta=0.1`, `max_speed_mps=50`, `min_cutoff_m=200`) are
+initial guesses; they must be tuned on training / student-test trips only once
+real candidates (#2) and classifier scores (#5) are available.
+
 ## Tests
 
 ```bash
