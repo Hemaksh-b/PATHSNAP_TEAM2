@@ -1,54 +1,84 @@
-"""CRS projection utilities — project lon/lat GPS points to UTM metres.
+"""Per-trip metric projection (Issue #1).
 
-Stub implementation used until Member 1 delivers the full version.
-The API pipeline calls project_trip() which adds 'x', 'y' columns (metres)
-to the track, nodes, and arcs DataFrames.
+Trips are spread over several countries/continents, so one fixed projected
+CRS would distort distances badly. Each trip is projected to the WGS 84 UTM
+zone that contains its mean position (distortion < 0.1 % inside a zone).
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any
+
 import numpy as np
-import pandas as pd
 
 try:
-    from pyproj import Transformer
+    from pyproj import CRS, Transformer
+
     _HAS_PYPROJ = True
 except ImportError:  # pragma: no cover
+    CRS = None  # type: ignore
+    Transformer = None  # type: ignore
     _HAS_PYPROJ = False
 
 
-def _lon_lat_to_utm(lon: np.ndarray, lat: np.ndarray):
-    """Convert WGS-84 lon/lat arrays to approximate UTM metres."""
+@dataclass(frozen=True)
+class _TargetCRS:
+    epsg: int
+
+    def to_epsg(self) -> int:
+        return self.epsg
+
+
+class _FallbackUTMTransformer:
+    """Metric local tangent-plane / UTM approximation when pyproj is unavailable."""
+
+    def __init__(self, epsg: int, ref_lat: float = 0.0) -> None:
+        self.target_crs = _TargetCRS(epsg)
+        self._cos_lat = float(np.cos(np.radians(ref_lat)))
+
+    def transform(self, lon: Any, lat: Any) -> tuple[np.ndarray, np.ndarray]:
+        lon_arr = np.asarray(lon, dtype=float)
+        lat_arr = np.asarray(lat, dtype=float)
+        x = lon_arr * 111_320.0 * self._cos_lat
+        y = lat_arr * 111_132.0
+        return x, y
+
+
+def utm_epsg_for(lon: float, lat: float) -> int:
+    """EPSG code of the WGS 84 UTM zone containing (lon, lat)."""
+    if not (-180.0 <= lon <= 180.0 and -80.0 <= lat <= 84.0):
+        raise ValueError(f"({lon}, {lat}) is outside the UTM domain")
+    zone = min(int((lon + 180.0) // 6.0) + 1, 60)
+    return (32600 if lat >= 0 else 32700) + zone
+
+
+def trip_transformer(trip: dict) -> Any:
+    """lon/lat -> UTM metres transformer for a trip (zone from the GPS mean)."""
+    track = trip["track"]
+    mean_lon = float(track["lon"].mean())
+    mean_lat = float(track["lat"].mean())
+    epsg = utm_epsg_for(mean_lon, mean_lat)
     if _HAS_PYPROJ:
-        transformer = Transformer.from_crs("EPSG:4326", "EPSG:32632", always_xy=True)
-        x, y = transformer.transform(lon, lat)
-        return np.asarray(x), np.asarray(y)
-    # Flat-earth approximation fallback
-    lat0 = float(np.mean(lat))
-    cos_lat = np.cos(np.radians(lat0))
-    x = np.asarray(lon, dtype=float) * 111_320 * cos_lat
-    y = np.asarray(lat, dtype=float) * 111_320
-    return x, y
+        return Transformer.from_crs("EPSG:4326", CRS.from_epsg(epsg), always_xy=True)
+    return _FallbackUTMTransformer(epsg=epsg, ref_lat=mean_lat)
 
 
 def project_trip(trip: dict) -> dict:
-    """Add 'x', 'y' columns (metres) to track/nodes DataFrames.
+    """Return a NEW trip dict with metric columns added (input is not modified).
 
-    Returns a *new* dict; the input is not modified.
+    Adds ``x``, ``y`` (metres) to ``track`` and ``nodes``, ``length_m`` to
+    ``arcs`` and the EPSG code under ``crs_epsg``.
     """
-    trip = dict(trip)  # shallow copy
-
-    # Project track
+    tr = trip_transformer(trip)
     track = trip["track"].copy()
-    x, y = _lon_lat_to_utm(track["lon"].to_numpy(), track["lat"].to_numpy())
-    track["x"] = x
-    track["y"] = y
-    trip["track"] = track
-
-    # Project nodes
     nodes = trip["nodes"].copy()
-    xn, yn = _lon_lat_to_utm(nodes["lon"].to_numpy(), nodes["lat"].to_numpy())
-    nodes["x"] = xn
-    nodes["y"] = yn
-    trip["nodes"] = nodes
+    arcs = trip["arcs"].copy()
 
-    return trip
+    track["x"], track["y"] = tr.transform(track["lon"].to_numpy(), track["lat"].to_numpy())
+    nodes["x"], nodes["y"] = tr.transform(nodes["lon"].to_numpy(), nodes["lat"].to_numpy())
+    nx_, ny_ = nodes["x"].to_numpy(), nodes["y"].to_numpy()
+    u, v = arcs["from_node_id"].to_numpy(), arcs["to_node_id"].to_numpy()
+    arcs["length_m"] = np.hypot(nx_[v] - nx_[u], ny_[v] - ny_[u])
+
+    epsg = tr.target_crs.to_epsg()
+    return {**trip, "track": track, "nodes": nodes, "arcs": arcs, "crs_epsg": epsg}
