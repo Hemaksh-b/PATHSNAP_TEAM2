@@ -11,13 +11,18 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from data_processing.config import BASE_DIR, EVALUATOR_TEST_DIR
+from data_processing.config import BASE_DIR, EVALUATOR_TEST_DIR, STUDENT_TEST_DIR
 
 LOG_DIR = BASE_DIR / "api" / "logs"
 
 
 def trips_dir() -> Path:
-    return Path(os.environ.get("PATHSNAP_TRIPS_DIR", str(EVALUATOR_TEST_DIR)))
+    env_dir = os.environ.get("PATHSNAP_TRIPS_DIR")
+    if env_dir:
+        return Path(env_dir)
+    if EVALUATOR_TEST_DIR.exists():
+        return EVALUATOR_TEST_DIR
+    return STUDENT_TEST_DIR
 
 
 def mock_mode() -> bool:

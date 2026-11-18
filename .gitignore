@@ -25,3 +25,9 @@ secrets.json
 
 # API request logs (auto-generated at runtime)
 api/logs/
+
+# Frontend Node & UI
+node_modules/
+ui/node_modules/
+ui/dist/
+

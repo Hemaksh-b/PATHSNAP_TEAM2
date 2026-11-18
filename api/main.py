@@ -13,6 +13,7 @@ import time
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from api import settings
 from api.evaluation import evaluate
@@ -74,8 +75,23 @@ def health() -> HealthResponse:
 
 
 @app.get("/trips", response_model=TripsResponse)
+@app.get("/evaluation/trips", response_model=TripsResponse)
 def trips() -> TripsResponse:
     return TripsResponse(trips=_trip_ids())
+
+
+@app.get("/maps/{trip_id}", response_class=HTMLResponse)
+def get_map(trip_id: str):
+    if settings.mock_mode():
+        return HTMLResponse(mock_prediction(trip_id).map_html)
+    if trip_id not in _trip_ids():
+        raise HTTPException(status_code=404, detail=f"unknown trip '{trip_id}'")
+    try:
+        pred = predict_trip(settings.trips_dir() / trip_id)
+        return HTMLResponse(pred.map_html)
+    except Exception as exc:
+        log.exception("map generation failed for trip %s", trip_id)
+        raise HTTPException(status_code=500, detail="map generation failed; see server log") from exc
 
 
 @app.post("/predict", response_model=PredictResponse)
