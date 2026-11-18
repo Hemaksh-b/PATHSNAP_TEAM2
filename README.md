@@ -40,10 +40,15 @@ pip install -r requirements.txt
 
 ### 2. Laptop 1 — Start FastAPI Backend
 ```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+export PATHSNAP_MOCK=0
+uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```
 
-### 3. Laptop 2 — Start Evaluator UI
+### 3. Laptop 2 — Start Evaluator UI (React + Vite)
 ```bash
-streamlit run ui/app.py
+cd ui
+npm install
+npm run dev
 ```
+
+For complete from-scratch setup, firewall configuration, and two-laptop viva instructions, see [deployment/TWO_LAPTOP_EXECUTION_GUIDE.md](deployment/TWO_LAPTOP_EXECUTION_GUIDE.md).
