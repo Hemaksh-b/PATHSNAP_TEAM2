@@ -2,6 +2,15 @@
 
 End-to-end machine learning + HMM/Viterbi map-matching system with a Two-Laptop Distributed Deployment (FastAPI Backend + Evaluator UI).
 
+## Team Details
+
+| Name | SRN | GitHub |
+| :--- | :--- | :--- |
+| Hemaksh Breja | PES2UG24CS191 | [@Hemaksh-b](https://github.com/Hemaksh-b) |
+| Hemant Ram | PES2UG24CS192 | [@Hemz1416](https://github.com/Hemz1416) |
+| Hemavathi E | PES2UG24CS193 | [@Hema3156](https://github.com/Hema3156) |
+| Himani Prabhu | PES2UG24CS194 | [@Himani-ai](https://github.com/Himani-ai) |
+
 ## Repository Structure
 
 | Folder | Required Component | Owner / Role |
