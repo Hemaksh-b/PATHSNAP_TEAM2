@@ -22,3 +22,6 @@ data/raw/
 *.pem
 *.key
 secrets.json
+
+# API request logs (auto-generated at runtime)
+api/logs/
