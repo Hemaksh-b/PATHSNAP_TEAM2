@@ -25,3 +25,9 @@ secrets.json
 
 # API request logs (auto-generated at runtime)
 api/logs/
+
+# Intermediate EDA script output
+data_processing/eda_outputs/
+
+# Large generated candidate feature matrices (generated via python -m feature_engineering.pipeline)
+feature_engineering/results/*.csv
