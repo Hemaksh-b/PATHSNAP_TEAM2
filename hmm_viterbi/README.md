@@ -64,6 +64,34 @@ Default parameters (`beta=0.1`, `max_speed_mps=50`, `min_cutoff_m=200`) are
 initial guesses; they must be tuned on training / student-test trips only once
 real candidates (#2) and classifier scores (#5) are available.
 
+## Real trips (#7 phase B)
+
+`decode_trip.py` is the end-to-end pipeline used by the experiments (and by the API once
+#10 switches to it): trip folder loaded **without** `.route` → per-trip UTM → candidates (#2)
+→ `extract_candidate_features` (#3) → emissions → road-graph transitions (#8) → Viterbi.
+
+Emissions (`--emissions auto|classifier|gaussian`):
+* **classifier** — `log(p)` of Member 2's exported model (`hyperparameter_optimisation.inference`);
+* **gaussian** — Gaussian on point-to-arc distance (σ = 10 m), no classifier needed.
+
+`auto` uses the classifier only if `artifacts/model_card.json` is real. If the card says
+`is_mock_data` it falls back to Gaussian and prints why; `--emissions classifier` with a mock
+model is refused (or, with `--allow-mock`, written only under `.../mock/`). Every CSV records
+its `emission_source`.
+
+```bash
+python -m hmm_viterbi.run_experiments --tune --tune-trips 20   # TRAINING trips -> artifacts/hmm_config.json
+python -m hmm_viterbi.run_experiments                          # STUDENT-TEST comparison
+```
+
+Metrics (`route_metrics.py`): observation accuracy vs the #3 aligned reference arc (also on
+labels not flagged uncertain), route continuity (consecutive distinct arcs joined head-to-tail)
+and route precision / recall / F1 on arc sets. **Pointwise** = best candidate per point
+(highest classifier probability, or nearest arc with Gaussian emissions), no sequence model.
+
+Results: `hmm_viterbi/results/decoder_tuning.csv`,
+`visualisations/results/hmm_comparison_summary.csv` / `_per_trip.csv`, `decoded/<trip>.csv`.
+
 ## Tests
 
 ```bash

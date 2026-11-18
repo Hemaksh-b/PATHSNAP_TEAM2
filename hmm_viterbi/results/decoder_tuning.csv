@@ -1,0 +1,13 @@
+beta,gap_break_s,pooled_observation_accuracy,n_trips,emission_source
+0.02,15.0,0.8409332336625094,20,gaussian_distance
+0.02,30.0,0.8422709210371011,20,gaussian_distance
+0.02,60.0,0.8431758272022662,20,gaussian_distance
+0.05,15.0,0.8412479836330016,20,gaussian_distance
+0.05,30.0,0.842447967895503,20,gaussian_distance
+0.05,60.0,0.8433528740606681,20,gaussian_distance
+0.1,15.0,0.8394578431758272,20,gaussian_distance
+0.1,30.0,0.840638155565173,20,gaussian_distance
+0.1,60.0,0.8415233898571822,20,gaussian_distance
+0.2,15.0,0.8409922492819766,20,gaussian_distance
+0.2,30.0,0.8422119054176339,20,gaussian_distance
+0.2,60.0,0.8430971397096432,20,gaussian_distance
