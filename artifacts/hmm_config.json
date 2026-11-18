@@ -1,0 +1,16 @@
+{
+  "k": 8,
+  "radius_m": 100.0,
+  "sigma_m": 10.0,
+  "viterbi": {
+    "min_logp": -10000.0,
+    "gap_break_s": 60.0
+  },
+  "transitions": {
+    "beta": 0.05,
+    "max_speed_mps": 50.0,
+    "min_cutoff_m": 200.0,
+    "backtrack_tolerance_m": 15.0,
+    "min_logp": -10000.0
+  }
+}
