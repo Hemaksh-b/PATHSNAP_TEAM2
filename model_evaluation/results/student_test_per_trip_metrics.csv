@@ -1,0 +1,51 @@
+model_key,model_name,trip_id,n_observations,top1_accuracy,macro_f1,binary_f1,precision,recall,log_loss,route_continuity,candidate_miss_rate,data_source
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_000,25,0.96,0.975,0.96,0.92308,1.0,0.03151,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_001,25,1.0,0.96408,0.9434,0.89286,1.0,0.06148,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_002,25,1.0,1.0,1.0,1.0,1.0,0.01012,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_003,25,0.96,0.97422,0.95833,0.95833,0.95833,0.05004,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_004,25,0.96,0.96408,0.9434,0.89286,1.0,0.06411,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_005,25,1.0,1.0,1.0,1.0,1.0,0.00478,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_006,25,0.96,1.0,1.0,1.0,1.0,0.00356,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_007,25,1.0,0.96305,0.94118,0.92308,0.96,0.03463,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_008,25,0.88,0.94014,0.90566,0.82759,1.0,0.14582,0.83333,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+logistic_regression,"Logistic Regression (L2, Balanced)",mock_student_test_009,25,0.96,0.98768,0.98039,0.96154,1.0,0.04982,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_000,25,0.96,0.98731,0.97959,0.96,1.0,0.02978,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_001,25,0.96,0.98768,0.98039,0.96154,1.0,0.15601,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_002,25,1.0,1.0,1.0,1.0,1.0,0.01535,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_003,25,0.96,0.9607,0.93617,0.95652,0.91667,0.05243,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_004,25,0.96,0.97572,0.96154,0.92593,1.0,0.17746,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_005,25,1.0,1.0,1.0,1.0,1.0,0.01439,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_006,25,0.96,1.0,1.0,1.0,1.0,0.0053,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_007,25,1.0,0.975,0.96,0.96,0.96,0.03393,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_008,25,0.88,0.92716,0.88462,0.82143,0.95833,0.10938,0.83333,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+knn_distance,Distance-Weighted KNN (k=15),mock_student_test_009,25,0.96,0.975,0.96,0.96,0.96,0.16252,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_000,25,0.96,0.975,0.96,0.92308,1.0,0.03961,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_001,25,1.0,0.96408,0.9434,0.89286,1.0,0.05027,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_002,25,1.0,1.0,1.0,1.0,1.0,0.00219,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_003,25,0.92,0.95,0.92,0.88462,0.95833,0.16953,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_004,25,0.96,0.97572,0.96154,0.92593,1.0,0.15068,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_005,25,1.0,0.98731,0.97959,1.0,0.96,0.01283,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_006,25,0.96,0.975,0.96,0.92308,1.0,0.015,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_007,25,0.96,0.98731,0.97959,1.0,0.96,0.13787,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_008,25,0.92,0.92914,0.88889,0.8,1.0,0.15096,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+decision_tree,Decision Tree (Depth-Regularized),mock_student_test_009,25,1.0,0.96305,0.94118,0.92308,0.96,0.06501,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_000,25,0.96,0.98731,0.97959,0.96,1.0,0.03099,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_001,25,1.0,0.96408,0.9434,0.89286,1.0,0.03625,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_002,25,1.0,1.0,1.0,1.0,1.0,0.01245,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_003,25,0.92,0.96193,0.93878,0.92,0.95833,0.05425,0.875,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_004,25,0.96,0.98768,0.98039,0.96154,1.0,0.05751,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_005,25,1.0,1.0,1.0,1.0,1.0,0.01453,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_006,25,0.96,1.0,1.0,1.0,1.0,0.0086,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_007,25,1.0,0.975,0.96,0.96,0.96,0.03231,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_008,25,0.88,0.95144,0.92308,0.85714,1.0,0.12334,0.83333,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+random_forest,"Random Forest (200 Trees, Balanced Subsample)",mock_student_test_009,25,0.96,0.98768,0.98039,0.96154,1.0,0.06275,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_000,25,0.96,0.97422,0.95833,0.95833,0.95833,0.02925,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_001,25,0.96,0.98768,0.98039,0.96154,1.0,0.03743,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_002,25,1.0,0.98731,0.97959,1.0,0.96,0.0206,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_003,25,0.96,0.9607,0.93617,0.95652,0.91667,0.06733,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_004,25,0.96,0.96305,0.94118,0.92308,0.96,0.05251,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_005,25,1.0,1.0,1.0,1.0,1.0,0.00496,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_006,25,0.96,1.0,1.0,1.0,1.0,0.00313,0.91667,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_007,25,1.0,0.96193,0.93878,0.95833,0.92,0.04372,1.0,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_008,25,0.88,0.92265,0.875,0.875,0.875,0.10122,0.83333,0.04,MOCK_SYNTHETIC_DO_NOT_REPORT
+mlp_neural_net,"Shallow MLP Neural Network (64-32, ReLU)",mock_student_test_009,25,0.96,0.975,0.96,0.96,0.96,0.05403,0.91667,0.0,MOCK_SYNTHETIC_DO_NOT_REPORT
