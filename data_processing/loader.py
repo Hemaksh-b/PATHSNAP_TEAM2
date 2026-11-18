@@ -1,9 +1,23 @@
 """Utilities to load .track, .nodes, .arcs, and .route files for a trip."""
 from pathlib import Path
+from typing import List
+
 import pandas as pd
 
 
-def load_trip(trip_dir: Path) -> dict:
+def load_trip(trip_dir: Path, include_route: bool = True) -> dict:
+    """Load a trip folder into a dict of DataFrames.
+
+    Parameters
+    ----------
+    trip_dir:
+        Path to the folder whose name is the trip_id.
+    include_route:
+        When *False* the reference route is never read from disk.
+        Pass ``False`` in the inference pipeline to prevent any
+        accidental label leakage into prediction.
+    """
+    trip_dir = Path(trip_dir)
     trip_id = trip_dir.name
     track_df = pd.read_csv(
         trip_dir / f"{trip_id}.track",
@@ -27,15 +41,16 @@ def load_trip(trip_dir: Path) -> dict:
     )
     arcs_df["arc_id"] = arcs_df.index
 
-    route_path = trip_dir / f"{trip_id}.route"
     route_df = None
-    if route_path.exists():
-        route_df = pd.read_csv(
-            route_path,
-            sep=r"\s+",
-            header=None,
-            names=["arc_id"],
-        )
+    if include_route:
+        route_path = trip_dir / f"{trip_id}.route"
+        if route_path.exists():
+            route_df = pd.read_csv(
+                route_path,
+                sep=r"\s+",
+                header=None,
+                names=["arc_id"],
+            )
 
     return {
         "trip_id": trip_id,
@@ -44,3 +59,15 @@ def load_trip(trip_dir: Path) -> dict:
         "arcs": arcs_df,
         "route": route_df,
     }
+
+
+def list_trips(trips_dir: Path) -> List[Path]:
+    """Return sorted list of trip sub-folder Paths under *trips_dir*.
+
+    Each sub-folder whose name does not start with '.' is treated as a trip.
+    Returns an empty list when *trips_dir* does not exist.
+    """
+    trips_dir = Path(trips_dir)
+    if not trips_dir.is_dir():
+        return []
+    return sorted(p for p in trips_dir.iterdir() if p.is_dir() and not p.name.startswith("."))
