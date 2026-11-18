@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Raw dataset & handouts (keep repo clean & fast to push/pull)
+handouts/
+data/raw/
+
+# Secrets & local configs
+*.pem
+*.key
+secrets.json
