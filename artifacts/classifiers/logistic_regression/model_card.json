@@ -1,0 +1,84 @@
+{
+  "model_key": "logistic_regression",
+  "model_name": "Logistic Regression (L2, Balanced)",
+  "algorithm_family": "Linear & Probabilistic",
+  "version": "1.0.0",
+  "exported_at_utc": "2026-11-18T09:57:42.720191+00:00",
+  "is_mock_data": false,
+  "data_source": "REAL_CANDIDATE_FEATURES",
+  "seed": 42,
+  "feature_columns": [
+    "dist_m",
+    "cand_rank",
+    "dist_gap_to_nearest_m",
+    "dist_ratio_to_nearest",
+    "frac_along",
+    "dist_to_start_m",
+    "dist_to_end_m",
+    "arc_length_m",
+    "gps_speed_mps",
+    "dt_prev_s",
+    "dt_next_s",
+    "heading_diff_deg",
+    "cos_heading_diff",
+    "sin_heading_diff",
+    "out_degree_v",
+    "in_degree_u"
+  ],
+  "n_features": 16,
+  "best_hyperparameters": {
+    "C": 1.0,
+    "penalty": "l2",
+    "solver": "lbfgs",
+    "class_weight": "balanced",
+    "max_iter": 500,
+    "random_state": 42
+  },
+  "tuned_vs_untuned": {
+    "note": "untuned registry defaults; the tuned final model is in artifacts/"
+  },
+  "computational_cost": {
+    "fit_seconds": 5.44,
+    "n_training_rows": 741867,
+    "n_training_trips": 80
+  },
+  "environment_versions": {
+    "python": "3.14.4",
+    "scikit_learn": "1.7.2",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "joblib": "1.6.0"
+  },
+  "inference_contract": {
+    "function": "hyperparameter_optimisation.inference.predict_candidate_probs",
+    "required_id_columns": [
+      "trip_id",
+      "obs_idx",
+      "arc_id"
+    ],
+    "required_feature_columns": [
+      "dist_m",
+      "cand_rank",
+      "dist_gap_to_nearest_m",
+      "dist_ratio_to_nearest",
+      "frac_along",
+      "dist_to_start_m",
+      "dist_to_end_m",
+      "arc_length_m",
+      "gps_speed_mps",
+      "dt_prev_s",
+      "dt_next_s",
+      "heading_diff_deg",
+      "cos_heading_diff",
+      "sin_heading_diff",
+      "out_degree_v",
+      "in_degree_u"
+    ],
+    "output_columns": [
+      "trip_id",
+      "obs_idx",
+      "arc_id",
+      "prob"
+    ]
+  }
+}

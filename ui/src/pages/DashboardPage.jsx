@@ -1,6 +1,7 @@
 import React from 'react';
 import { OverviewBanner } from '../components/Dashboard/OverviewBanner';
 import { TripSelector } from '../components/Dashboard/TripSelector';
+import { ModelSelector } from '../components/Dashboard/ModelSelector';
 import { MetricsCard } from '../components/Dashboard/MetricsCard';
 import { MapViewer } from '../components/Dashboard/MapViewer';
 
@@ -10,6 +11,11 @@ export function DashboardPage({
   onNavigateToStatus,
 }) {
   const {
+    models,
+    selectedModel,
+    selectModel,
+    classifierName,
+    modelsError,
     trips,
     loadingTrips,
     tripsError,
@@ -38,6 +44,16 @@ export function DashboardPage({
         error={backendStatus.error}
         baseUrl={backendStatus.baseUrl}
         onNavigateToStatus={onNavigateToStatus}
+      />
+
+      {/* Model Selection Section */}
+      <ModelSelector
+        models={models}
+        selectedModel={selectedModel}
+        onSelectModel={selectModel}
+        classifierName={classifierName}
+        isDisabled={isReconstructing}
+        error={modelsError}
       />
 
       {/* Trip Selection Section */}

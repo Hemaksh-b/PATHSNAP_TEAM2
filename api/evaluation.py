@@ -1,10 +1,13 @@
-"""Server-side scoring against the reference route (Issue #10).
+"""Server-side scoring against the reference route (Issue #10 / #30).
 
 Runs only AFTER prediction, on Laptop 1. The reference route is read here and
-nowhere in the inference pipeline; it is never returned to the UI.
+nowhere in the inference pipeline; it is never returned to the UI. Metrics are
+the same as in the report (``hmm_viterbi.route_metrics``) and observation
+labels use Member 1's order-preserving alignment (#3).
 """
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 from typing import Sequence
 
@@ -12,8 +15,9 @@ import numpy as np
 import pandas as pd
 
 from data_processing.loader import load_trip
-from data_processing.miss_rate import approx_reference_arc
 from data_processing.projection import project_trip
+from feature_engineering.alignment import align_observations_to_route
+from hmm_viterbi.route_metrics import all_metrics
 
 
 def read_reference_route(trip_dir: Path) -> list[int] | None:
@@ -24,39 +28,22 @@ def read_reference_route(trip_dir: Path) -> list[int] | None:
     return pd.read_csv(path, sep=r"\s+", header=None, names=["arc_id"])["arc_id"].tolist()
 
 
-def route_continuity(arc_ids: Sequence, arcs: pd.DataFrame) -> float | None:
-    """Share of consecutive (deduplicated) predicted arcs joined head-to-tail."""
-    seq = [a for i, a in enumerate(arc_ids) if a is not None and (i == 0 or a != arc_ids[i - 1])]
-    seq = [a for i, a in enumerate(seq) if i == 0 or a != seq[i - 1]]
-    if len(seq) < 2:
-        return None
-    to_node = arcs["to_node_id"].to_numpy()
-    from_node = arcs["from_node_id"].to_numpy()
-    joined = [to_node[a] == from_node[b] for a, b in zip(seq, seq[1:])]
-    return float(np.mean(joined))
-
-
-def evaluate(trip_dir: Path, arc_ids: Sequence, arcs: pd.DataFrame) -> dict | None:
-    reference = read_reference_route(trip_dir)
+@lru_cache(maxsize=12)
+def _reference(trip_dir: str) -> tuple[tuple[int, ...], np.ndarray, np.ndarray] | None:
+    reference = read_reference_route(Path(trip_dir))
     if reference is None:
         return None
-    trip = load_trip(trip_dir, include_route=False)
-    trip = {**trip, "route": pd.DataFrame({"arc_id": reference})}
-    ref_per_obs = approx_reference_arc(project_trip(trip))
-    pred = np.array([-1 if a is None else a for a in arc_ids])
-    obs_acc = float(np.mean(pred == ref_per_obs))
+    trip = {**load_trip(Path(trip_dir), include_route=False),
+            "route": pd.DataFrame({"arc_id": reference})}
+    align = align_observations_to_route(project_trip(trip)).sort_values("obs_idx")
+    aligned = align["aligned_arc_id"].fillna(-1).to_numpy(dtype=int)
+    certain = ~align["is_uncertain"].to_numpy(dtype=bool)
+    return tuple(reference), aligned, certain
 
-    pred_set = {a for a in arc_ids if a is not None}
-    ref_set = set(reference)
-    tp = len(pred_set & ref_set)
-    precision = tp / len(pred_set) if pred_set else None
-    recall = tp / len(ref_set) if ref_set else None
-    f1 = (2 * precision * recall / (precision + recall)
-          if precision and recall else None)
-    return {
-        "observation_accuracy": obs_acc,
-        "route_precision": precision,
-        "route_recall": recall,
-        "route_f1": f1,
-        "route_continuity": route_continuity(arc_ids, arcs),
-    }
+
+def evaluate(trip_dir: Path, arc_ids: Sequence[int | None], arcs: pd.DataFrame) -> dict | None:
+    ref = _reference(str(trip_dir))
+    if ref is None:
+        return None
+    reference, aligned, certain = ref
+    return all_metrics(arc_ids, aligned, certain, list(reference), arcs)

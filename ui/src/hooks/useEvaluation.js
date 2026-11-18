@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchEvaluationTrips, runRouteReconstruction, getMapUrl, fetchMapHtml } from '../services/api';
+import { fetchEvaluationTrips, fetchModels, runRouteReconstruction, getMapUrl, fetchMapHtml } from '../services/api';
 
 export function useEvaluation(isBackendOnline) {
+  const [models, setModels] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [classifierName, setClassifierName] = useState(null);
+  const [modelsError, setModelsError] = useState(null);
+
   const [trips, setTrips] = useState([]);
   const [loadingTrips, setLoadingTrips] = useState(false);
   const [tripsError, setTripsError] = useState(null);
@@ -41,11 +46,31 @@ export function useEvaluation(isBackendOnline) {
     setLoadingTrips(false);
   }, [selectedTripId]);
 
+  // Fetch the selectable decoding models (GET /models)
+  const loadModels = useCallback(async () => {
+    const res = await fetchModels();
+    if (!res.success) {
+      setModels([]);
+      setSelectedModel(null);
+      // 404 = backend predates model selection: run its default model, show no error
+      setModelsError(res.status === 404 ? null : (res.error || 'Failed to retrieve models from backend.'));
+      return;
+    }
+    setModels(res.models);
+    setClassifierName(res.classifier);
+    setModelsError(null);
+    setSelectedModel((current) => {
+      const stillAvailable = res.models.some((m) => m.id === current && m.available);
+      return stillAvailable ? current : res.defaultModel;
+    });
+  }, []);
+
   useEffect(() => {
     if (isBackendOnline) {
       loadTrips();
+      loadModels();
     }
-  }, [isBackendOnline, loadTrips]);
+  }, [isBackendOnline, loadTrips, loadModels]);
 
   // Execute route reconstruction
   const runReconstruction = useCallback(async (tripIdToRun = null) => {
@@ -62,7 +87,7 @@ export function useEvaluation(isBackendOnline) {
 
     try {
       setReconstructionProgress('ML Feature Scoring & Viterbi Decoding in progress...');
-      const res = await runRouteReconstruction(targetTripId);
+      const res = await runRouteReconstruction(targetTripId, selectedModel);
 
       if (!res.success) {
         setPredictionError(res.error || 'Reconstruction request failed on backend.');
@@ -76,6 +101,7 @@ export function useEvaluation(isBackendOnline) {
         {
           timestamp: new Date().toLocaleTimeString(),
           tripId: targetTripId,
+          model: res.modelLabel || res.model,
           metrics: res.metrics,
           roundTripTimeMs: res.roundTripTimeMs,
         },
@@ -84,7 +110,7 @@ export function useEvaluation(isBackendOnline) {
 
       // Handle map loading:
       // If the predict response included HTML or map URL, use it directly
-      const directMapUrl = getMapUrl(targetTripId);
+      const directMapUrl = getMapUrl(targetTripId, res.model || selectedModel);
       setMapUrl(directMapUrl);
 
       if (typeof res.mapData === 'string' && res.mapData.includes('<html')) {
@@ -92,7 +118,7 @@ export function useEvaluation(isBackendOnline) {
       } else {
         // Fetch map HTML from /maps/{trip_id}
         setLoadingMap(true);
-        const mapRes = await fetchMapHtml(targetTripId);
+        const mapRes = await fetchMapHtml(targetTripId, res.model || selectedModel);
         if (mapRes.success && mapRes.html) {
           setMapHtml(mapRes.html);
         } else {
@@ -109,7 +135,7 @@ export function useEvaluation(isBackendOnline) {
       setIsReconstructing(false);
       setReconstructionProgress(null);
     }
-  }, [selectedTripId, isReconstructing]);
+  }, [selectedTripId, selectedModel, isReconstructing]);
 
   const selectTrip = useCallback((tripId) => {
     setSelectedTripId(tripId);
@@ -123,6 +149,12 @@ export function useEvaluation(isBackendOnline) {
   }, []);
 
   return {
+    models,
+    selectedModel,
+    selectModel: setSelectedModel,
+    classifierName,
+    modelsError,
+    loadModels,
     trips,
     loadingTrips,
     tripsError,

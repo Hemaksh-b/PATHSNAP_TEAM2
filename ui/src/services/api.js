@@ -211,18 +211,37 @@ export async function fetchEvaluationTrips() {
 }
 
 /**
+ * Fetch the selectable decoding models
+ * GET /models -> { default, classifier, models: [{ id, label, description, uses_hmm, uses_classifier, available }] }
+ */
+export async function fetchModels() {
+  const res = await apiRequest('/models', { method: 'GET' }, 8000);
+  if (!res.success) {
+    return res;
+  }
+  const data = res.data || {};
+  return {
+    success: true,
+    models: Array.isArray(data.models) ? data.models : [],
+    defaultModel: data.default || null,
+    classifier: data.classifier || null,
+  };
+}
+
+/**
  * Run route reconstruction & prediction for selected trip
  * POST /predict
- * 
- * Body: { trip_id: string }
+ *
+ * Body: { trip_id: string, model?: string }
  */
-export async function runRouteReconstruction(tripId) {
+export async function runRouteReconstruction(tripId, model = null) {
   if (!tripId) {
     return { success: false, error: 'No trip ID provided' };
   }
 
   const payload = {
     trip_id: tripId,
+    ...(model ? { model } : {}),
   };
 
   const startTime = performance.now();
@@ -245,6 +264,9 @@ export async function runRouteReconstruction(tripId) {
   return {
     success: true,
     tripId: tripId,
+    model: data.model || model,
+    modelLabel: data.model_label || null,
+    emissionSource: data.emission_source || null,
     metrics: metrics,
     mapData: data.map_html || data.map_url || data.map || null,
     predictedRoute: data.predicted_route || data.route || data.path || null,
@@ -314,22 +336,22 @@ function extractMetrics(data, fallbackInferenceMs) {
  * Returns full URL to Folium map endpoint
  * GET /maps/{trip_id}
  */
-export function getMapUrl(tripId) {
+export function getMapUrl(tripId, model = null) {
   if (!tripId) return '';
   const baseUrl = getApiBaseUrl();
-  return `${baseUrl}/maps/${encodeURIComponent(tripId)}`;
+  const query = model ? `?model=${encodeURIComponent(model)}` : '';
+  return `${baseUrl}/maps/${encodeURIComponent(tripId)}${query}`;
 }
 
 /**
- * Fetches Folium HTML map content from GET /maps/{trip_id}
+ * Fetches Folium HTML map content from GET /maps/{trip_id}?model=...
  */
-export async function fetchMapHtml(tripId) {
+export async function fetchMapHtml(tripId, model = null) {
   if (!tripId) {
     return { success: false, error: 'Trip ID required' };
   }
 
-  const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}/maps/${encodeURIComponent(tripId)}`;
+  const url = getMapUrl(tripId, model);
 
   try {
     const response = await fetch(url, {
