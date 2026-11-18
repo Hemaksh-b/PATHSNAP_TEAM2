@@ -1,0 +1,32 @@
+{
+  "logistic_regression": {
+    "tn": 987,
+    "fp": 17,
+    "fn": 2,
+    "tp": 244
+  },
+  "knn_distance": {
+    "tn": 992,
+    "fp": 12,
+    "fn": 5,
+    "tp": 241
+  },
+  "decision_tree": {
+    "tn": 984,
+    "fp": 20,
+    "fn": 4,
+    "tp": 242
+  },
+  "random_forest": {
+    "tn": 991,
+    "fp": 13,
+    "fn": 2,
+    "tp": 244
+  },
+  "mlp_neural_net": {
+    "tn": 994,
+    "fp": 10,
+    "fn": 11,
+    "tp": 235
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "generated_at_utc": "2026-11-18T05:50:20.605751+00:00",
+  "is_mock_data": true,
+  "warning": "SYNTHETIC MOCK DATA FOR HARNESS VERIFICATION ONLY \u2014 DO NOT REPORT IN DELIVERABLES.",
+  "source_path": "mock_generator",
+  "seed": 42,
+  "n_splits": 5,
+  "n_trips": 80,
+  "n_rows": 9695,
+  "positive_class_rate": 0.19515,
+  "feature_columns": [
+    "dist_m",
+    "cand_rank",
+    "dist_gap_to_nearest_m",
+    "dist_ratio_to_nearest",
+    "frac_along",
+    "dist_to_start_m",
+    "dist_to_end_m",
+    "arc_length_m",
+    "gps_speed_mps",
+    "dt_prev_s",
+    "dt_next_s",
+    "heading_diff_deg",
+    "cos_heading_diff",
+    "sin_heading_diff",
+    "out_degree_v",
+    "in_degree_u"
+  ],
+  "models_trained": [
+    {
+      "model_key": "logistic_regression",
+      "display_name": "Logistic Regression (L2, Balanced)",
+      "algorithm_family": "Linear & Probabilistic",
+      "requires_scaling": true,
+      "imbalance_handling": "class_weight='balanced'",
+      "default_params": {
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": "balanced",
+        "max_iter": 500,
+        "random_state": 42
+      }
+    },
+    {
+      "model_key": "knn_distance",
+      "display_name": "Distance-Weighted KNN (k=15)",
+      "algorithm_family": "Instance-Based",
+      "requires_scaling": true,
+      "imbalance_handling": "inverse-distance neighbor weighting",
+      "default_params": {
+        "n_neighbors": 15,
+        "weights": "distance",
+        "metric": "minkowski",
+        "p": 2
+      }
+    },
+    {
+      "model_key": "decision_tree",
+      "display_name": "Decision Tree (Depth-Regularized)",
+      "algorithm_family": "Tree-Based",
+      "requires_scaling": false,
+      "imbalance_handling": "class_weight='balanced'",
+      "default_params": {
+        "criterion": "gini",
+        "max_depth": 8,
+        "min_samples_leaf": 25,
+        "class_weight": "balanced",
+        "random_state": 42
+      }
+    },
+    {
+      "model_key": "random_forest",
+      "display_name": "Random Forest (200 Trees, Balanced Subsample)",
+      "algorithm_family": "Ensemble (Bagging)",
+      "requires_scaling": false,
+      "imbalance_handling": "class_weight='balanced_subsample'",
+      "default_params": {
+        "n_estimators": 200,
+        "max_depth": 12,
+        "min_samples_leaf": 10,
+        "max_features": "sqrt",
+        "class_weight": "balanced_subsample",
+        "random_state": 42
+      }
+    },
+    {
+      "model_key": "mlp_neural_net",
+      "display_name": "Shallow MLP Neural Network (64-32, ReLU)",
+      "algorithm_family": "Neural Networks",
+      "requires_scaling": true,
+      "imbalance_handling": "cross-entropy probability calibration + early stopping",
+      "default_params": {
+        "hidden_layer_sizes": [
+          64,
+          32
+        ],
+        "activation": "relu",
+        "alpha": 0.001,
+        "learning_rate_init": 0.001,
+        "early_stopping": true,
+        "max_iter": 120,
+        "random_state": 42
+      }
+    }
+  ]
+}
