@@ -88,6 +88,12 @@ def evaluate_trip(trip_dir: Path, settings: DecodeSettings, clf: Classifier | No
     return rows, decoded
 
 
+def _require_trips(trip_dirs: list[Path], where: Path) -> list[Path]:
+    if not trip_dirs:
+        raise SystemExit(f"no trips found in {where} - put the dataset under handouts/ (see README)")
+    return trip_dirs
+
+
 def tune(trip_dirs: list[Path], base: DecodeSettings, clf: Classifier | None) -> tuple[pd.DataFrame, DecodeSettings]:
     cache = {d: (prepare_trip(d, base), reference_info(d)) for d in trip_dirs}
     rows = []
@@ -134,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
     settings = load_settings(args.artifacts_dir)
 
     if args.tune:
-        grid, settings = tune(list_trips(TRAIN_DIR)[: args.tune_trips], settings, clf)
+        grid, settings = tune(_require_trips(list_trips(TRAIN_DIR), TRAIN_DIR)[: args.tune_trips], settings, clf)
         tuning_dir.mkdir(parents=True, exist_ok=True)
         grid.to_csv(tuning_dir / "decoder_tuning.csv", index=False)
         config_dir.mkdir(parents=True, exist_ok=True)
@@ -144,7 +150,7 @@ def main(argv: list[str] | None = None) -> int:
 
     (compare_dir / "decoded").mkdir(parents=True, exist_ok=True)
     rows = []
-    for d in list_trips(STUDENT_TEST_DIR):
+    for d in _require_trips(list_trips(STUDENT_TEST_DIR), STUDENT_TEST_DIR):
         trip_rows, decoded = evaluate_trip(d, settings, clf)
         rows.extend(trip_rows)
         decoded.to_csv(compare_dir / "decoded" / f"{d.name}.csv", index=False)
