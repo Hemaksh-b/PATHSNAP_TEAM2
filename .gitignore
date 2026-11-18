@@ -15,7 +15,8 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# Raw dataset
+# Raw dataset & handouts (keep repo clean & fast to push/pull)
+handouts/
 data/raw/
 
 # Secrets & local configs
