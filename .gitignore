@@ -31,3 +31,9 @@ node_modules/
 ui/node_modules/
 ui/dist/
 
+# Intermediate EDA script output
+data_processing/eda_outputs/
+
+# Large generated candidate feature matrices (generated via python -m feature_engineering.pipeline)
+feature_engineering/results/*.csv
+
